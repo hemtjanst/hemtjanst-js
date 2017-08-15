@@ -1,0 +1,51 @@
+{
+  "name": "hemtjanst",
+  "version": "0.0.2",
+  "description": "Hemtjänst library",
+  "author": {
+    "name": "bonan",
+    "email": "npm@bonan.se"
+  },
+  "bugs": {
+    "url": "https://github.com/hemtjanst/hemtjanst-js/issues"
+  },
+  "contributors": [
+    {
+      "name": "bonan",
+      "email": "npm@bonan.se"
+    }
+  ],
+  "dependencies": {
+  },
+  "devDependencies": {
+    "debug": "^3.0.0",
+    "mqtt": "^2.11.0",
+    "tslint": "^5.6.0",
+    "typescript": "^2.4.2",
+    "webpack": "^3.5.4",
+    "uglify-js": "^3.0.27",
+    "awesome-typescript-loader": "^3.2.2"
+  },
+  "homepage": "https://github.com/hemtjanst/hemtjanst-js",
+  "keywords": [
+    "tradfri",
+    "mqtt",
+    "hemtjanst"
+  ],
+  "license": "Apache-2.0",
+  "browser": "main.js",
+  "main": "main.js",
+  "scripts": {
+    "test": "node lib/test.js",
+    "build": "npm run compile; npm run webpack; npm run uglify",
+    "compile": "node node_modules/typescript/bin/tsc",
+    "webpack": "node node_modules/webpack/bin/webpack.js lib/main.js dist/hemtjanst.js --output-library hemtjanst",
+    "uglify": "node node_modules/uglify-js/bin/uglifyjs -o dist/hemtjanst.min.js dist/hemtjanst.js",
+    "combine": "npm run compile; npm run webpack; node node_modules/webpack/bin/webpack.js node_modules/mqtt dist/mqtt.js --output-library mqtt; cat dist/hemtjanst.js dist/mqtt.js > dist/hemtjanst-mqtt.js; rm dist/mqtt.js; node node_modules/uglify-js/bin/uglifyjs -o dist/hemtjanst-mqtt.min.js dist/hemtjanst-mqtt.js"
+  },
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hemtjanst/hemtjanst-js.git"
+  }
+}

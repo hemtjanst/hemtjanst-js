@@ -1,0 +1,12 @@
+.idea/
+dist/
+ui/
+*.log
+*.pid
+node_modules/
+.npm
+.npmignore
+.gitignore
+.eslintcache
+*.tgz
+.env

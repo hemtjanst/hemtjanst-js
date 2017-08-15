@@ -1,0 +1,12 @@
+.idea/
+dist/
+lib/
+ui/
+*.log
+*.pid
+node_modules/
+.npm
+.eslintcache
+*.tgz
+.env
+package-lock.json
