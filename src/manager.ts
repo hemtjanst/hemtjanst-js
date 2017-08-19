@@ -1,3 +1,5 @@
+import {Device} from "./device";
+
 export declare interface Buffer {
     toString: () => string
 }
@@ -6,12 +8,16 @@ import {IClientPublishOptions, ISubscriptionGrant, MqttClient, OnMessageCallback
 
 import {log, debug} from "./log";
 
-export class Manager {
+export abstract class Manager {
 
+    protected announce: boolean = false;
+    protected devices: Device[] = [];
     protected mqtt: MqttClient;
+    protected abstract isClient: boolean;
     private subscriptions: Subscription[] = [];
 
     constructor(mqtt: MqttClient) {
+        this.devices = [];
         this.mqtt = mqtt;
         this.subscriptions = [];
         mqtt.on("message", (t,p,a) => { this.onMessage(t,p,a); });
@@ -35,6 +41,26 @@ export class Manager {
         let s = new Subscription(topic, this.mqtt);
         s.addCallback(callback);
         this.subscriptions.push(s)
+    }
+
+    public AddDevice(device: Device) {
+        debug("Trying to add device");
+        debug(device);
+        if (this.devices.indexOf(device) == -1 && device.validate()) {
+            device.setManager(this, this.isClient);
+            if (this.announce && this.isClient) {
+                device.updateMeta()
+            }
+            this.devices.push(device);
+        }
+    }
+
+    protected getDevice(topic: string): Device {
+        for (let i in this.devices) {
+            if (this.devices[i].topicName() === topic) {
+                return this.devices[i];
+            }
+        }
     }
 
     private onMessage(topic: string, payload: Buffer, packet: Packet) {

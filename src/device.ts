@@ -3,10 +3,13 @@ import {utils} from "./utils";
 import {Manager} from "./manager";
 import {log, debug} from "./log";
 
+const announcePrefix = "announce/";
 
 export declare type ValueCallback = (device: Device, feature: string|FeatureType, value: string) => any
 
 export declare interface DeviceMeta {
+    name: string;
+    type: DeviceType|string;
     manufacturer?: string;
     model?: string;
     serialNumber?: string;
@@ -23,11 +26,11 @@ export class Device {
     private meta: DeviceMeta;
     private feature = {};
 
-    constructor(topic: string, name: string, type: DeviceType, opts: DeviceMeta) {
+    constructor(topic: string, opts: DeviceMeta) {
         this.topic = topic;
-        this.name = name;
-        utils.typeName(type, DeviceType);
-        this.type = type;
+        this.name = opts.name;
+        utils.typeName(opts.type, DeviceType);
+        this.type = opts.type;
         if (opts && typeof opts === "object") {
             this.meta = opts;
             if (opts.feature && typeof opts.feature === "object") {
@@ -76,7 +79,7 @@ export class Device {
     }
 
     public updateMeta() {
-        this.manager.publish(this.topic + "/meta", this.metaJson(), {qos: 1, retain: true});
+        this.manager.publish(announcePrefix + this.topic, this.metaJson(), {qos: 1, retain: true});
     }
 
     public setManager(manager: Manager, isClient?: boolean) {
@@ -84,9 +87,6 @@ export class Device {
             throw new Error("Manager already set");
         }
         this.manager = manager;
-        if (isClient) {
-            this.updateMeta();
-        }
         for (let f in this.feature) {
             let ftName = f;
             let ft = this.feature[ftName];
@@ -137,18 +137,22 @@ export class Device {
         return JSON.stringify(o)
     }
 
-    public set(feature: string|FeatureType, value: string, callback?) {
+    public set(feature: string|FeatureType, value: string|number|boolean, callback?) {
         if (!this.manager) {
             throw new Error("Device has not manager, unable to Update()");
         }
-        this.manager.publish(this.setTopicName(feature), value, {qos:1, retain:false, dup:false}, callback);
+        if (value === true) { value = 1; }
+        if (value === false) { value = 0; }
+        this.manager.publish(this.setTopicName(feature), ""+value, {qos:1, retain:false, dup:false}, callback);
     }
 
-    public update(feature: string|FeatureType, value: string, callback?) {
+    public update(feature: string|FeatureType, value: string|number|boolean, callback?) {
         if (!this.manager) {
             throw new Error("Device has not manager, unable to Update()");
         }
-        this.manager.publish(this.getTopicName(feature), value, {qos:1, retain:true, dup:false}, callback);
+        if (value === true) { value = 1; }
+        if (value === false) { value = 0; }
+        this.manager.publish(this.getTopicName(feature), ""+value, {qos:1, retain:true, dup:false}, callback);
     }
 
     public onSet(feature: string|FeatureType, cb: ValueCallback) {

@@ -5,30 +5,13 @@ import {MqttClient} from "mqtt";
 import {log, debug} from "./log";
 
 export class Client extends Manager {
-
-    private announce: boolean = false;
-    private devices: Device[] = [];
+    isClient: boolean = true;
 
     constructor(mqtt: MqttClient) {
         super(mqtt);
-        this.devices = [];
         this.subscribe("discover", (topic, payload, packet) => {
             this.onDiscover();
         });
-    }
-
-    public AddDevice(device: Device) {
-        debug("Trying to add device");
-        debug(device);
-        if (this.devices.indexOf(device) == -1 && device.validate()) {
-            device.setManager(this, true);
-            if (this.announce) { 
-                let topic = device.topicName();
-                debug("Announcing device " + topic);
-                this.publish("announce", topic);
-            }
-            this.devices.push(device);
-        }
     }
 
     private onDiscover() {
@@ -36,26 +19,34 @@ export class Client extends Manager {
         this.announce = true;
         for (let d in this.devices) {
             let topic = this.devices[d].topicName();
-            debug("Announcing device " + topic);
-            this.publish("announce", topic);
+            try {
+                if (this.devices[d].validate()) {
+                    debug(`Announcing device ${topic}`);
+                    this.devices[d].updateMeta();
+                }
+            } catch (err) {
+                log(`Failed to announce device ${topic}: `, err)
+            }
         }
     }
 
 }
 export class Server extends Manager {
-
-    private devices: Device[] = [];
+    isClient: boolean = false;
 
     constructor(mqtt :MqttClient) {
         super(mqtt);
-        this.subscribe("announce", (topic, payload, packet) => {
-            this.onAnnounce(payload.toString());
+        this.subscribe("announce/#", (topic, payload, packet) => {
+            this.onAnnounce(topic, payload.toString());
         });
         this.publish("discover", "1", {qos: 1, retain: true, dup: false});
     }
 
-    private onAnnounce(topic: string) {
-
+    private onAnnounce(topic: string, json: string) {
+        let meta = JSON.parse(json);
+        let oldDev = this.getDevice(topic);
+        let device = new Device(topic, meta);
+        this.devices.push(device);
     }
 
 
