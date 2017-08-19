@@ -1,1 +1,1 @@
-return require('lib/main');
+return require('./lib/main');
