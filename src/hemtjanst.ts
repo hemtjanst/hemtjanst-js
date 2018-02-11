@@ -33,11 +33,12 @@ export class Client extends Manager {
 }
 export class Server extends Manager {
     isClient: boolean = false;
+    onDevice: ((any) => any)[] = [];
 
     constructor(mqtt :MqttClient) {
         super(mqtt);
         this.subscribe("announce/#", (topic, payload, packet) => {
-            this.onAnnounce(topic, payload.toString());
+            this.onAnnounce(topic.substr(9), payload.toString());
         });
         this.publish("discover", "1", {qos: 1, retain: true, dup: false});
     }
@@ -45,8 +46,23 @@ export class Server extends Manager {
     private onAnnounce(topic: string, json: string) {
         let meta = JSON.parse(json);
         let oldDev = this.getDevice(topic);
+        if (typeof oldDev !== "undefined") {
+            oldDev.updateDevice(meta);
+            return;
+        }
         let device = new Device(topic, meta);
+        device.setManager(this, false);
         this.devices.push(device);
+        this.onDevice.forEach(v => {
+            v(device);
+        })
+    }
+
+    on(ev: string, cb: (any) => any) {
+        if (ev == "device") {
+            this.onDevice.push(cb);
+            this.devices.forEach(cb);
+        }
     }
 
 

@@ -107,7 +107,30 @@ class Subscription {
     }
 
     public onMessage(topic: string, payload: Buffer, packet: Packet) {
-        if (topic !== this.topic) {
+        let wildcardMatch = false;
+        if (this.topic.substr(-1,1) === "#") {
+            if (this.topic.substr(0,this.topic.length-1) == topic.substr(0, this.topic.length-1)) {
+                wildcardMatch = true;
+            }
+        }
+        if (this.topic.indexOf("+") >= 0) {
+            wildcardMatch = true;
+            let thsp = this.topic.split("/");
+            let tosp = topic.split("/");
+            if (thsp.length != tosp.length) {
+                wildcardMatch = false;
+            } else {
+                for (let k in thsp) {
+                    if (thsp[k] == "+" || thsp[k] == tosp[k]) {
+                        continue;
+                    }
+                    wildcardMatch = false;
+                    break;
+                }
+            }
+        }
+
+        if (!wildcardMatch && topic !== this.topic) {
             return;
         }
         for (let i in this.callbacks) {

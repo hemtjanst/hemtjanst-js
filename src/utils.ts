@@ -9,6 +9,6 @@ export class utils {
                 return k.substr(0, 1).toLowerCase() + k.substr(1);
             }
         }
-        throw new Error("Invalid or unknown type: " + name);
+        return name;
     }
 }

@@ -1,6 +1,6 @@
 .idea/
-dist/
 ui/
+src/
 *.log
 *.pid
 node_modules/

@@ -1,6 +1,6 @@
 {
   "name": "hemtjanst",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Hemtjänst library",
   "author": {
     "name": "bonan",
@@ -15,8 +15,7 @@
       "email": "npm@bonan.se"
     }
   ],
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "debug": "^3.0.0",
     "mqtt": "^2.11.0",
@@ -33,8 +32,8 @@
     "hemtjanst"
   ],
   "license": "Apache-2.0",
-  "browser": "main.js",
-  "main": "main.js",
+  "browser": "dist/hemtjanst.min.js",
+  "main": "index.js",
   "scripts": {
     "test": "node lib/test.js",
     "build": "npm run compile; npm run webpack; npm run uglify",

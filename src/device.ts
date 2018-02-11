@@ -22,29 +22,21 @@ export class Device {
     private manager: Manager;
     private topic: string;
     private name: string;
-    private type: DeviceType;
+    private type: string;
     private meta: DeviceMeta;
     private feature = {};
 
     constructor(topic: string, opts: DeviceMeta) {
         this.topic = topic;
-        this.name = opts.name;
-        utils.typeName(opts.type, DeviceType);
-        this.type = opts.type;
-        if (opts && typeof opts === "object") {
-            this.meta = opts;
-            if (opts.feature && typeof opts.feature === "object") {
-                for (let k in opts.feature) {
-                    this.addFeature(k, opts.feature[k]);
-                }
-            }
-        }
+        this.updateDevice(opts);
     }
 
     public addFeature(type: string|FeatureType, opts: FeatureMeta) {
         let fName = utils.typeName(type, FeatureType);
-        if (fName === "") {
-            throw new Error("Invalid or unknown feature: "+type)
+        let curFt = this.feature[fName];
+        if (typeof curFt !== "undefined") {
+            curFt.opts = opts;
+            return;
         }
         let feature = new Feature();
         feature.opts = opts;
@@ -80,6 +72,29 @@ export class Device {
 
     public updateMeta() {
         this.manager.publish(announcePrefix + this.topic, this.metaJson(), {qos: 1, retain: true});
+    }
+
+    public updateDevice(opts: DeviceMeta) {
+        if (opts && typeof opts === "object") {
+            this.name = opts.name;
+            this.type = utils.typeName(opts.type, DeviceType);
+            let curFeatures = {};
+            for (let k in this.feature) {
+                if (!this.feature.hasOwnProperty(k)) continue;
+                curFeatures[k] = true;
+            }
+            this.meta = opts;
+            if (opts.feature && typeof opts.feature === "object") {
+                for (let k in opts.feature) {
+                    this.addFeature(k, opts.feature[k]);
+                    delete curFeatures[k];
+                }
+            }
+            for (let k in curFeatures) {
+                if (!curFeatures.hasOwnProperty(k)) continue;
+                delete this.feature[k];
+            }
+        }
     }
 
     public setManager(manager: Manager, isClient?: boolean) {
@@ -139,7 +154,7 @@ export class Device {
 
     public set(feature: string|FeatureType, value: string|number|boolean, callback?) {
         if (!this.manager) {
-            throw new Error("Device has not manager, unable to Update()");
+            throw new Error("Device has not manager, unable to Set()");
         }
         if (value === true) { value = 1; }
         if (value === false) { value = 0; }
@@ -191,6 +206,12 @@ export class Device {
             t = f.opts.getTopic;
         }
         return t;
+    }
+    public getType(): string {
+        return utils.typeName(this.type, DeviceType);
+    }
+    public getName(): string {
+        return this.name;
     }
 }
 
