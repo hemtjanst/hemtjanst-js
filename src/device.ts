@@ -24,7 +24,7 @@ export class Device {
     private name: string;
     private type: string;
     private meta: DeviceMeta;
-    private feature = {};
+    private feature: {[name: string]: Feature} = {};
 
     constructor(topic: string, opts: DeviceMeta) {
         this.topic = topic;
@@ -178,7 +178,7 @@ export class Device {
         this.getFeature(feature).onUpdate(cb);
     }
 
-    public getFeatures() {
+    public getFeatures(): {[name: string]: Feature} {
         return this.feature;
     }
 

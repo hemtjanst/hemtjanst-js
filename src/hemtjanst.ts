@@ -33,7 +33,7 @@ export class Client extends Manager {
 }
 export class Server extends Manager {
     isClient: boolean = false;
-    onDevice: ((any) => any)[] = [];
+    private onDevice: ((any) => any)[] = [];
 
     constructor(mqtt :MqttClient) {
         super(mqtt);
@@ -57,6 +57,8 @@ export class Server extends Manager {
             v(device);
         })
     }
+
+    on(ev: "device", cb: (dev: Device) => void)
 
     on(ev: string, cb: (any) => any) {
         if (ev == "device") {
