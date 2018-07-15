@@ -1,3 +1,5 @@
+import * as debug from "debug";
+
 let debugFunc = function(a: any) {
 
 };

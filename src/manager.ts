@@ -1,8 +1,6 @@
-import {Device} from "./device";
+/// <reference types="node" />
 
-export declare interface Buffer {
-    toString: () => string
-}
+import {Device} from "./device";
 
 import {IClientPublishOptions, ISubscriptionGrant, MqttClient, OnMessageCallback, Packet, PacketCallback} from "mqtt";
 
