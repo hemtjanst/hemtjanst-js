@@ -163,7 +163,7 @@ export class Device {
 
     public set(feature: string|FeatureType, value: string|number|boolean, callback?) {
         if (!this.manager) {
-            throw new Error("Device has not manager, unable to Set()");
+            throw new Error("Device has no manager, unable to Set()");
         }
         if (value === true) { value = 1; }
         if (value === false) { value = 0; }
@@ -172,7 +172,7 @@ export class Device {
 
     public update(feature: string|FeatureType, value: string|number|boolean, callback?) {
         if (!this.manager) {
-            throw new Error("Device has not manager, unable to Update()");
+            throw new Error("Device has no manager, unable to Update()");
         }
         if (value === true) { value = 1; }
         if (value === false) { value = 0; }

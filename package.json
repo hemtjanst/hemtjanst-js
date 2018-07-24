@@ -1,6 +1,6 @@
 {
   "name": "hemtjanst",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Hemtjänst library",
   "author": {
     "name": "bonan",
@@ -34,15 +34,13 @@
     "hemtjanst"
   ],
   "license": "Apache-2.0",
-  "browser": "dist/hemtjanst.min.js",
+  "browser": "dist/main.js",
   "main": "index.js",
   "scripts": {
     "test": "node lib/test.js",
-    "build": "npm run compile; npm run webpack; npm run uglify",
+    "build": "npm run compile; npm run webpack",
     "compile": "node node_modules/typescript/bin/tsc",
-    "webpack": "node node_modules/webpack/bin/webpack.js lib/main.js dist/hemtjanst.js --config webpack.config.js --mode production --output-library hemtjanst",
-    "uglify": "node node_modules/uglify-js/bin/uglifyjs -o dist/hemtjanst.min.js dist/hemtjanst.js",
-    "combine": "npm run compile; npm run webpack; node node_modules/webpack/bin/webpack.js node_modules/mqtt dist/mqtt.js --output-library mqtt; cat dist/hemtjanst.js dist/mqtt.js > dist/hemtjanst-mqtt.js; rm dist/mqtt.js; node node_modules/uglify-js/bin/uglifyjs -o dist/hemtjanst-mqtt.min.js dist/hemtjanst-mqtt.js"
+    "webpack": "node node_modules/webpack/bin/webpack.js lib/main.js --config webpack.config.js --mode production --output-library hemtjanst"
   },
   "readmeFilename": "README.md",
   "repository": {

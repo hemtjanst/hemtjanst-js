@@ -1,12 +1,9 @@
-import * as debug from "debug";
-
 let debugFunc = function(a: any) {
-
 };
 
 try {
-    if (typeof debug !== 'undefined') {
-        debugFunc = debug("hemtjanst");
+    if (typeof eval('debug') !== 'undefined') {
+        debugFunc = eval('debug')("hemtjanst");
     }
 } catch (err) {}
 
