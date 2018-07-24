@@ -7,6 +7,10 @@ const announcePrefix = "announce/";
 
 export declare type ValueCallback = (device: Device, feature: string|FeatureType, value: string) => any
 
+export declare interface DeviceMetaReachable extends DeviceMeta {
+    reachable?: boolean
+}
+
 export declare interface DeviceMeta {
     name: string;
     type: DeviceType|string;
@@ -23,10 +27,11 @@ export class Device {
     private topic: string;
     private name: string;
     private type: string;
+    private reachable: boolean;
     private meta: DeviceMeta;
     private feature: {[name: string]: Feature} = {};
 
-    constructor(topic: string, opts: DeviceMeta) {
+    constructor(topic: string, opts: DeviceMetaReachable) {
         this.topic = topic;
         this.updateDevice(opts);
     }
@@ -74,10 +79,14 @@ export class Device {
         this.manager.publish(announcePrefix + this.topic, this.metaJson(), {qos: 1, retain: true});
     }
 
-    public updateDevice(opts: DeviceMeta) {
+    public updateDevice(opts: DeviceMetaReachable) {
         if (opts && typeof opts === "object") {
             this.name = opts.name;
             this.type = utils.typeName(opts.type, DeviceType);
+            if (typeof opts.reachable !== 'undefined') {
+                this.reachable = opts.reachable;
+                opts.reachable = undefined;
+            }
             let curFeatures = {};
             for (let k in this.feature) {
                 if (!this.feature.hasOwnProperty(k)) continue;

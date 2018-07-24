@@ -31,20 +31,28 @@ export class Client extends Manager {
     }
 
 }
+
 export class Server extends Manager {
     isClient: boolean = false;
     private onDevice: ((any) => any)[] = [];
+    private discoverSent: boolean = false;
 
-    constructor(mqtt :MqttClient) {
+    constructor(mqtt: MqttClient) {
         super(mqtt);
-        this.subscribe("announce/#", (topic, payload, packet) => {
-            this.onAnnounce(topic.substr(9), payload.toString());
-        });
-        this.publish("discover", "1", {qos: 1, retain: true, dup: false});
+        setTimeout(() => {
+            this.subscribe("announce/#", (topic, payload, packet) => {
+                this.onAnnounce(topic.substr(9), payload.toString());
+            });
+        }, 100);
+        setTimeout(() => {
+            this.discoverSent = true;
+            this.publish("discover", "1", {qos: 1, retain: true, dup: false});
+        }, 3000);
     }
 
     private onAnnounce(topic: string, json: string) {
         let meta = JSON.parse(json);
+        meta.reachable = this.discoverSent;
         let oldDev = this.getDevice(topic);
         if (typeof oldDev !== "undefined") {
             oldDev.updateDevice(meta);
