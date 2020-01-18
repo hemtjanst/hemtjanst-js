@@ -1,6 +1,6 @@
 import {Device} from "./device";
 import {Manager} from "./manager";
-import {MqttClient} from "mqtt";
+import {MqttClient} from "./mqtt";
 
 import {log, debug} from "./log";
 

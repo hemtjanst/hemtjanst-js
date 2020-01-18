@@ -9,4 +9,3 @@ node_modules/
 .eslintcache
 *.tgz
 .env
-package-lock.json

@@ -1,6 +1,6 @@
 {
   "name": "hemtjanst",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Hemtjänst library",
   "author": {
     "name": "bonan",
@@ -20,11 +20,10 @@
     "@types/node": "^10.5.2",
     "awesome-typescript-loader": "^5.2.0",
     "debug": "^3.1.0",
-    "mqtt": "^2.18.3",
     "tslint": "^5.11.0",
     "typescript": "^2.9.2",
     "uglify-js": "^3.4.5",
-    "webpack": "^4.16.2",
+    "webpack": "^4.41.5",
     "webpack-cli": "^3.1.0"
   },
   "homepage": "https://github.com/hemtjanst/hemtjanst-js",

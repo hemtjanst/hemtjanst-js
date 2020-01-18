@@ -2,7 +2,7 @@
 
 import {Device} from "./device";
 
-import {IClientPublishOptions, ISubscriptionGrant, MqttClient, OnMessageCallback, Packet, PacketCallback} from "mqtt";
+import {IClientPublishOptions, ISubscriptionGrant, MqttClient, OnMessageCallback, Packet, PacketCallback} from "./mqtt";
 
 import {log, debug} from "./log";
 
